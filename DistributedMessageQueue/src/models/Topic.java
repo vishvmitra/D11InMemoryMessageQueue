@@ -43,10 +43,6 @@ public class Topic {
         return subscribers;
     }
 
-    public void setSubscribers(List<ISubscriber> subscribers) {
-        this.subscribers = subscribers;
-    }
-
     public AtomicInteger getOffset(String subscriberId) {
         return subscriberOffsetMap.get(subscriberId);
     }
@@ -72,25 +68,5 @@ public class Topic {
         subscriberOffsetMap.put(subscriber.getId(), new AtomicInteger(0));
         TopicSubscriber topicSubscriber = new TopicSubscriber(subscriber, this);
         this.topicSubscribers.put(subscriber.getId(), topicSubscriber);
-    }
-
-    public void publish() {
-        System.out.println("Start Publishing");
-        for (ISubscriber subscriber : this.getSubscribers()) {
-            startSubcriberWorkers(subscriber);
-        }
-    }
-
-    private void startSubcriberWorkers(ISubscriber subscriber) {
-        final String subscriberId = subscriber.getId();
-        TopicSubscriber topicSubscriber = null;
-        if (!topicSubscribers.containsKey(subscriberId)) {
-            topicSubscriber = new TopicSubscriber(subscriber, this);
-        }
-        else {
-            topicSubscriber = topicSubscribers.get(subscriberId);
-        }
-
-        topicSubscriber.wakeUpIfNeeded();
     }
 }
